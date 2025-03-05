@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>開獎紀錄結果</title>
+</head>
+<body>
+    <h1>開獎紀錄結果</h1>
+    <table>
+        <tr>
+            <th>數字</th>
+            <th>出現次數</th>
+        </tr>
+        {% for number, count in number_counts.items() %}
+        <tr>
+            <td>{{ number }}</td>
+            <td>{{ count }}</td>
+        </tr>
+        {% endfor %}
+    </table>
+    
+    <h2>最有可能出現的四個數字組合</h2>
+    <ul>
+        {% for combo in selected_combinations %}
+        <li>{{ combo }}</li>
+        {% endfor %}
+    </ul>
+    
+    <h2>獎號落點分析圖</h2>
+    <img src="{{ url_for('static', filename='lottery_analysis.png') }}" alt="獎號落點分析圖">
+    
+    <a href="{{ url_for('index') }}">返回查詢</a>
+</body>
+</html>
