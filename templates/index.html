@@ -5,23 +5,34 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>四星彩開獎紀錄查詢</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        h1 {
+            color: #007bff;
+        }
+        .container {
+            margin-top: 50px;
+        }
+    </style>
 </head>
 <body>
-    <div class="container mt-5">
+    <div class="container">
         <h1 class="text-center">查詢四星彩開獎紀錄</h1>
         
         {% if start_year_month and end_year_month %}
         <p class="text-center">上次查詢範圍: {{ start_year_month }} 到 {{ end_year_month }}</p>
         {% endif %}
         
-        <form method="POST" class="mt-4">
+        <form method="POST">
             <div class="form-group">
                 <label for="start_year_month">開始日期:</label>
-                <input type="month" id="start_year_month" name="start_year_month" class="form-control" value="{{ start_year_month }}" required>
+                <input type="month" class="form-control" id="start_year_month" name="start_year_month" value="{{ start_year_month }}" required>
             </div>
             <div class="form-group">
                 <label for="end_year_month">結束日期:</label>
-                <input type="month" id="end_year_month" name="end_year_month" class="form-control" value="{{ end_year_month }}" required>
+                <input type="month" class="form-control" id="end_year_month" name="end_year_month" value="{{ end_year_month }}" required>
             </div>
             <button type="submit" class="btn btn-primary btn-block">查詢</button>
         </form>

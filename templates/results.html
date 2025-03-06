@@ -5,12 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>開獎紀錄結果</title>
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
+    <style>
+        body {
+            background-color: #f8f9fa;
+        }
+        h1 {
+            color: #007bff;
+        }
+        .container {
+            margin-top: 50px;
+        }
+        table {
+            margin-top: 20px;
+        }
+    </style>
 </head>
 <body>
-    <div class="container mt-5">
+    <div class="container">
         <h1 class="text-center">開獎紀錄結果</h1>
-        <table class="table table-striped mt-4">
-            <thead>
+        <table class="table table-striped">
+            <thead class="thead-dark">
                 <tr>
                     <th>數字</th>
                     <th>出現次數</th>
@@ -26,17 +40,17 @@
             </tbody>
         </table>
         
-        <h2 class="mt-4">最有可能出現的四個數字組合</h2>
+        <h2 class="text-center">最有可能出現的四個數字組合</h2>
         <ul class="list-group">
             {% for combo, count in selected_combinations %}
             <li class="list-group-item">{{ combo }} (出現次數: {{ count }})</li>
             {% endfor %}
         </ul>
         
-        <h2 class="mt-4">獎號落點分析圖</h2>
+        <h2 class="text-center">獎號落點分析圖</h2>
         <img src="{{ url_for('static', filename='lottery_analysis.png') }}" alt="獎號落點分析圖" class="img-fluid">
         
-        <a href="{{ url_for('index') }}" class="btn btn-primary mt-4">返回查詢</a>
+        <a href="{{ url_for('index') }}" class="btn btn-primary btn-block mt-4">返回查詢</a>
     </div>
 </body>
 </html>
