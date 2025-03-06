@@ -4,32 +4,43 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>開獎紀錄結果</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
-    <h1>開獎紀錄結果</h1>
-    <table>
-        <tr>
-            <th>數字</th>
-            <th>出現次數</th>
-        </tr>
-        {% for number, count in number_counts.items() %}
-        <tr>
-            <td>{{ number }}</td>
-            <td>{{ count }}</td>
-        </tr>
-        {% endfor %}
-    </table>
-    
-    <h2>最有可能出現的四個數字組合</h2>
-    <ul>
-        {% for combo in selected_combinations %}
-        <li>{{ combo }}</li>
-        {% endfor %}
-    </ul>
-    
-    <h2>獎號落點分析圖</h2>
-    <img src="{{ url_for('static', filename='lottery_analysis.png') }}" alt="獎號落點分析圖">
-    
-    <a href="{{ url_for('index') }}">返回查詢</a>
+    <div class="container mt-5">
+        <h1 class="text-center">開獎紀錄結果</h1>
+        <table class="table table-striped mt-4">
+            <thead>
+                <tr>
+                    <th>數字</th>
+                    <th>出現次數</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for number, count in number_counts.items() %}
+                <tr>
+                    <td>{{ number }}</td>
+                    <td>{{ count }}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
+        
+        <h2 class="mt-4">最有可能出現的四個數字組合</h2>
+        <ul class="list-group">
+            {% for combo, count in selected_combinations %}
+            <li class="list-group-item">{{ combo }} (出現次數: {{ count }})</li>
+            {% endfor %}
+        </ul>
+        
+        <h2 class="mt-4">獎號落點分析圖</h2>
+        <img src="{{ url_for('static', filename='lottery_analysis.png') }}" alt="獎號落點分析圖" class="img-fluid">
+        
+        <a href="{{ url_for('index') }}" class="btn btn-primary mt-4">返回查詢</a>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

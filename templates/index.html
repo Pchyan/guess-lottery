@@ -4,17 +4,34 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>四星彩開獎紀錄查詢</title>
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
 </head>
 <body>
-    <h1>查詢四星彩開獎紀錄</h1>
-    <form method="POST">
-        <label for="start_year_month">開始日期:</label>
-        <input type="month" id="start_year_month" name="start_year_month" required>
+    <div class="container mt-5">
+        <h1 class="text-center">查詢四星彩開獎紀錄</h1>
         
-        <label for="end_year_month">結束日期:</label>
-        <input type="month" id="end_year_month" name="end_year_month" required>
+        {% if start_year_month and end_year_month %}
+        <p class="text-center">上次查詢範圍: {{ start_year_month }} 到 {{ end_year_month }}</p>
+        {% endif %}
         
-        <button type="submit">查詢</button>
-    </form>
+        <form method="POST" class="mt-4">
+            <div class="form-group">
+                <label for="start_year_month">開始日期:</label>
+                <input type="month" id="start_year_month" name="start_year_month" class="form-control" value="{{ start_year_month }}" required>
+            </div>
+            <div class="form-group">
+                <label for="end_year_month">結束日期:</label>
+                <input type="month" id="end_year_month" name="end_year_month" class="form-control" value="{{ end_year_month }}" required>
+            </div>
+            <button type="submit" class="btn btn-primary btn-block">查詢</button>
+        </form>
+
+        <h2 class="text-center mt-4">或</h2>
+        <a href="{{ url_for('analyze') }}" class="btn btn-secondary btn-block">直接進行資料分析</a>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.2/dist/umd/popper.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
 </body>
 </html>

@@ -1,4 +1,4 @@
-from flask import Flask, render_template, request, redirect, url_for
+from flask import Flask, render_template, request, redirect, url_for, session
 import pandas as pd
 import os
 from TaiwanLottery import TaiwanLotteryCrawler
@@ -6,8 +6,10 @@ import matplotlib.pyplot as plt
 import re  # 引入正則表達式模組
 import itertools
 import random
+from collections import Counter
 
 app = Flask(__name__)
+app.secret_key = 'your_secret_key'  # 設置一個密鑰以支持 session
 
 # 新增函數以爬取指定年份和月份的開獎紀錄
 def fetch_lottery_results(start_year, end_year, start_month, end_month):
@@ -69,15 +71,28 @@ def load_data():
 def analyze_numbers(df):
     # 將獎號轉換為數字列表
     all_numbers = []
-    for numbers in df['獎號']:  # 使用 '獎號' 而不是 'numbers'
-        # 使用正則表達式提取數字
-        extracted_numbers = re.findall(r'\d+', str(numbers))  # 提取所有數字
-        all_numbers.extend([int(num) for num in extracted_numbers])  # 將提取的數字轉換為整數並擴展列表
-    
+    all_combinations = []  # 用於存儲所有的號碼組合
+    for numbers in df['獎號']:
+        extracted_numbers = re.findall(r'\d+', str(numbers))
+        all_numbers.extend([int(num) for num in extracted_numbers])
+        
+        # 將號碼組合添加到列表中
+        if len(extracted_numbers) >= 4:
+            combinations = itertools.permutations(extracted_numbers, 4)  # 考慮順序的排列
+            all_combinations.extend([''.join(sorted(combo)) for combo in combinations])  # 將組合轉換為字符串
+
     # 統計每個數字的出現次數
     number_counts = pd.Series(all_numbers).value_counts().sort_index()
     print("各數字出現次數：")
     print(number_counts)
+
+    # 統計每個號碼組合的出現次數
+    combination_counts = Counter(all_combinations)
+    most_common_combinations = combination_counts.most_common(5)  # 獲取最常見的五個組合
+
+    # 設置字體以支持中文
+    plt.rcParams['font.sans-serif'] = ['Microsoft JhengHei']
+    plt.rcParams['axes.unicode_minus'] = False
     
     # 可視化分析
     plt.figure(figsize=(12, 6))
@@ -87,21 +102,20 @@ def analyze_numbers(df):
     plt.ylabel("出現次數")
     
     # 保存圖形為文件
-    plt.savefig('static/lottery_analysis.png')  # 將圖形保存到 static 資料夾
-    plt.close()  # 關閉圖形以釋放資源
-    
-    # 生成最有可能的四個數字組合
-    most_common_numbers = number_counts.index[-4:]  # 獲取出現頻率最高的四個數字
-    possible_combinations = list(itertools.combinations(most_common_numbers, 4))  # 生成所有可能的四個數字組合
-    
-    # 隨機選擇五組組合
-    selected_combinations = random.sample(possible_combinations, min(5, len(possible_combinations)))
+    plt.savefig('static/lottery_analysis.png')
+    plt.close()
     
     print("最有可能出現的四個數字組合：")
-    for combo in selected_combinations:
+    for combo in most_common_combinations:
         print(combo)
-    
-    return number_counts, selected_combinations
+
+    return number_counts, most_common_combinations
+
+@app.route('/analyze', methods=['GET'])
+def analyze():
+    df = load_data()  # 讀取現有的 CSV 資料
+    number_counts, selected_combinations = analyze_numbers(df)  # 進行分析
+    return render_template('results.html', number_counts=number_counts, selected_combinations=selected_combinations)
 
 @app.route('/', methods=['GET', 'POST'])
 def index():
@@ -117,11 +131,17 @@ def index():
         if int(start_year) > int(end_year) or (int(start_year) == int(end_year) and int(start_month) > int(end_month)):
             raise ValueError("結束年份和月份必須大於或等於開始年份和月份。")
         
+        # 儲存查詢範圍到 session
+        session['start_year_month'] = start_year_month
+        session['end_year_month'] = end_year_month
+        
         lottery_results = fetch_lottery_results(start_year, end_year, start_month, end_month)
         save_to_csv(lottery_results)  # 儲存從爬蟲獲取的資料
         return redirect(url_for('results'))
 
-    return render_template('index.html')
+    return render_template('index.html', 
+                           start_year_month=session.get('start_year_month', ''), 
+                           end_year_month=session.get('end_year_month', ''))
 
 @app.route('/results')
 def results():
